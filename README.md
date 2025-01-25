@@ -90,3 +90,118 @@ Copy code
 ### Notes:
 - Make sure to send the correct **Content-Type** as `application/json`.
 - The password is hashed before storing in the database, 
+
+# Endpoint Documentation: `/user/login`
+
+## Description
+This endpoint allows registered users to log in by validating their email and password. Upon successful authentication, it returns a JSON Web Token (JWT) for secure access to protected resources.
+
+---
+
+## Request
+### Method: `POST`
+### URL: `/user/login`
+### Headers:
+- `Content-Type: application/json`
+
+### Request Body:
+```json
+{
+  "email": "test@test.com",
+  "password": "test_password"
+}
+Field	Type	Required	Description
+email	string	Yes	The registered email address of the user.
+password	string	Yes	The password associated with the email.
+Response
+Success Response:
+Status Code: 200 OK
+Body:
+json
+Copy code
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "test@test.com",
+    "socketId": null
+  }
+}
+Error Responses:
+Validation Error:
+Status Code: 400 Bad Request Body:
+
+json
+Copy code
+{
+  "errors": [
+    {
+      "msg": "Invalid email",
+      "param": "email",
+      "location": "body"
+    }
+  ]
+}
+Invalid Credentials:
+Status Code: 401 Unauthorized Body:
+
+json
+Copy code
+{
+  "message": "Invalid email or password"
+}
+Validation Rules:
+email: Must be a valid email format.
+password: Required field.
+Error Handling
+Missing or invalid fields in the request body will return a 400 Bad Request status with specific validation errors.
+Incorrect email or password will result in a 401 Unauthorized status with an appropriate error message.
+
+
+
+# API Endpoints
+
+## GET /users/profile
+
+- **Description**: 
+  - Retrieves the profile of the currently authenticated user.
+  
+- **Access**: 
+  - Private (Requires a valid JWT token)
+
+- **Headers**: 
+  - `Authorization: Bearer <token>`
+
+- **Response**:
+  - **200 OK**: Returns the user profile data (name, email, createdAt, etc.)
+  
+  Example:
+  ```json
+  {
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "createdAt": "2023-01-01T00:00:00.000Z"
+  }
+GET /users/logout
+Description:
+
+Logs out the user by clearing the JWT token cookie and blacklisting the token.
+Access:
+
+Private (Requires a valid JWT token)
+Headers:
+
+Authorization: Bearer <token>
+Response:
+
+200 OK: Returns a message indicating the user has been logged out.
+Example:
+
+json
+Copy code
+{
+  "message": "Logged Out"
+}
